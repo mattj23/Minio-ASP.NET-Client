@@ -3,8 +3,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Minio;
 
-namespace MinioClient
+namespace MinioSC
 {
     /// <summary>
     /// A client for an external Minio service.  Wraps the raw MinioClient from their nuget library, adding some features
@@ -32,9 +33,9 @@ namespace MinioClient
 
         public string Bucket { get; }
 
-        public Minio.MinioClient GetClient()
+        public MinioClient GetClient()
         {
-            return new Minio.MinioClient(_host, _accessKey, _secretKey).WithSSL();
+            return new MinioClient(_host, _accessKey, _secretKey).WithSSL();
         }
 
         public string FileHash(string fileName)
