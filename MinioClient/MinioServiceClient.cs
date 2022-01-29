@@ -11,13 +11,13 @@ namespace MinioSC
     /// A client for an external Minio service.  Wraps the raw MinioClient from their nuget library, adding some features
     /// which I found myself continuously having to re-implement.
     /// </summary>
-    public class MinoServiceClient
+    public class MinioServiceClient
     {
-        private string _host;
-        private string _accessKey;
-        private string _secretKey;
+        private readonly string _host;
+        private readonly string _accessKey;
+        private readonly string _secretKey;
 
-        public MinoServiceClient(string connectionString)
+        public MinioServiceClient(string connectionString)
         {
             var parts = connectionString.Split(';');
             if (parts.Length < 4)
@@ -88,3 +88,4 @@ namespace MinioSC
         }
 
     }
+}
