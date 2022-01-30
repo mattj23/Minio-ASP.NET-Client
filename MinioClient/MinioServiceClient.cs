@@ -51,6 +51,13 @@ namespace MinioSC
             return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLower();
         }
 
+        public async Task<string> HashAsync(Stream stream)
+        {
+            using var sha = SHA1.Create();
+            var result = await sha.ComputeHashAsync(stream);
+            return BitConverter.ToString(result).Replace("-", "").ToLower();
+        }
+
         public async Task<byte[]> LoadSmallFileContents(string objectName)
         {
             try
@@ -68,11 +75,16 @@ namespace MinioSC
             }
         }
 
-        public Task WriteBytesToFile(string objectName, byte[] bytes)
+        public Task PutFile(string objectName, Stream stream)
+        {
+            return GetClient().PutObjectAsync(Bucket, objectName, stream, stream.Length);
+        }
+        
+        public Task PutBytesToFile(string objectName, byte[] bytes)
         {
             using var stream = new MemoryStream(bytes);
             stream.Seek(0, SeekOrigin.Begin);
-            return GetClient().PutObjectAsync(Bucket, objectName, stream, stream.Length);
+            return PutFile(objectName, stream);
         }
 
         public async Task<string> LoadSmallFileText(string objectName)
