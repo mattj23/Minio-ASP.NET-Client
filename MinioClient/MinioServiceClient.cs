@@ -88,6 +88,12 @@ namespace MinioSC
             await client.RemoveObjectAsync(Bucket, objectName);
         }
 
-        public record Config(string Host, string AccessKey, string SecretKey, string Bucket);
+        public class Config
+        {
+            public string Host { get; set; }
+            public string AccessKey { get; set; }
+            public string SecretKey { get; set; }
+            public string Bucket { get; set; }
+        }
     }
 }
