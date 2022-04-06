@@ -13,29 +13,18 @@ namespace MinioSC
     /// </summary>
     public class MinioServiceClient
     {
-        private readonly string _host;
-        private readonly string _accessKey;
-        private readonly string _secretKey;
+        private readonly Config _config;
 
-        public MinioServiceClient(string connectionString)
+        public MinioServiceClient(Config config)
         {
-            var parts = connectionString.Split(';');
-            if (parts.Length < 4)
-            {
-                throw new ArgumentException("Minio connection string needs four semicolon-separated values");
-            }
-
-            _host = parts[0];
-            _accessKey = parts[1];
-            _secretKey = parts[2];
-            Bucket = parts[3];
+            _config = config;
         }
 
-        public string Bucket { get; }
+        public string Bucket => _config.Bucket;
 
         public MinioClient GetClient()
         {
-            return new MinioClient(_host, _accessKey, _secretKey).WithSSL();
+            return new MinioClient(_config.Host, _config.AccessKey, _config.SecretKey).WithSSL();
         }
 
         public string FileHash(string fileName)
@@ -99,5 +88,6 @@ namespace MinioSC
             await client.RemoveObjectAsync(Bucket, objectName);
         }
 
+        public record Config(string Host, string AccessKey, string SecretKey, string Bucket);
     }
 }
