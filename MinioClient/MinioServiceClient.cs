@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -24,7 +25,30 @@ namespace MinioSC
 
         public MinioClient GetClient()
         {
-            return new MinioClient(_config.Host, _config.AccessKey, _config.SecretKey).WithSSL();
+            return new MinioClient()
+                .WithEndpoint(_config.Host)
+                .WithCredentials(_config.AccessKey, _config.SecretKey)
+                .WithSSL()
+                .Build();
+        }
+
+        public async Task<string[]> ListObjects(string prefix, bool recursive)
+        {
+            var client = GetClient();
+            var args = new ListObjectsArgs()
+                .WithBucket(_config.Bucket)
+                .WithPrefix(prefix)
+                .WithRecursive(recursive);
+
+            var observable = client.ListObjectsAsync(args);
+
+            var results = new List<string>();
+            var tcs = new TaskCompletionSource();
+            var subscription = observable.Subscribe(item => results.Add(item.Key),
+                () => tcs.TrySetResult());
+            await tcs.Task;
+            subscription.Dispose();
+            return results.ToArray();
         }
 
         public string FileHash(string fileName)
