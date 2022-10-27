@@ -25,11 +25,16 @@ namespace MinioSC
 
         public MinioClient GetClient()
         {
-            return new MinioClient()
+            var client = new MinioClient()
                 .WithEndpoint(_config.Host)
-                .WithCredentials(_config.AccessKey, _config.SecretKey)
-                .WithSSL()
-                .Build();
+                .WithCredentials(_config.AccessKey, _config.SecretKey);
+
+            if (!string.IsNullOrWhiteSpace(_config.Region))
+            {
+                client = client.WithRegion(_config.Region);
+            }
+            
+            return client.WithSSL().Build();
         }
 
         public async Task<string[]> ListObjects(string prefix, bool recursive)
@@ -118,6 +123,8 @@ namespace MinioSC
             public string AccessKey { get; set; }
             public string SecretKey { get; set; }
             public string Bucket { get; set; }
+            
+            public string Region { get; set; }
         }
     }
 }
