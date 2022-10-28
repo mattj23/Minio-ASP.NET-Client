@@ -117,6 +117,22 @@ namespace MinioSC
             await client.RemoveObjectAsync(Bucket, objectName);
         }
 
+        public async Task<string> PresignedGet(string objectName, int validForSeconds, string downloadAsFileName)
+        {
+            var headers = new Dictionary<string, string>
+            {
+                { "response-content-disposition", $"attachment;filename={downloadAsFileName}" }
+            };
+            var client = GetClient();
+            var args = new PresignedGetObjectArgs()
+                .WithExpiry(validForSeconds)
+                .WithBucket(Bucket)
+                .WithObject(objectName)
+                .WithHeaders(headers);
+            var link = await client.PresignedGetObjectAsync(args);
+            return link;
+        }
+
         public class Config
         {
             public string Host { get; set; }
