@@ -95,14 +95,20 @@ namespace MinioSC
 
         public Task PutFile(string objectName, Stream stream)
         {
-            return GetClient().PutObjectAsync(Bucket, objectName, stream, stream.Length);
+            var args = new PutObjectArgs()
+                .WithStreamData(stream)
+                .WithObjectSize(stream.Length)
+                .WithBucket(Bucket)
+                .WithObject(objectName)
+                .WithContentType("application/octet-stream");
+            return GetClient().PutObjectAsync(args);
         }
         
-        public Task PutBytesToFile(string objectName, byte[] bytes)
+        public async Task PutBytesToFile(string objectName, byte[] bytes)
         {
             using var stream = new MemoryStream(bytes);
             stream.Seek(0, SeekOrigin.Begin);
-            return PutFile(objectName, stream);
+            await PutFile(objectName, stream);
         }
 
         public async Task<string> LoadSmallFileText(string objectName)

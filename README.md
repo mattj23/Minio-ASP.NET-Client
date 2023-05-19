@@ -10,10 +10,11 @@ In the `appsettings.json` file, add a configuration section:
 
 ```json
 "Minio": {
-    "Host": "minio.astinc.services",
-    "AccessKey": "cmmc",
-    "SecretKey": "EHsQxGwzUEc7eD7VEzLW",
-    "Bucket": "cmmc"
+    "Host": "my-endpoint.example.com:1234",
+    "AccessKey": "accessKeyName",
+    "SecretKey": "secretkeytext",
+    "Bucket": "bucket-name",
+    "Region": "us-east-1"
   },
 ```
 
